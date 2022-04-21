@@ -1,9 +1,9 @@
 data "aws_route53_zone" "internal" {
-  zone_id      = "Z01368741LHGOO0T1BT54"
+  zone_id      = "Z034785541G9EV6BV8GL"
   private_zone = true
 }
 
 data "aws_route53_zone" "public" {
-  zone_id      = "Z077856535D0FCPZ3R8B"
+  zone_id      = "Z0624124M15MXS0PMWB3"
   private_zone = false
 }
