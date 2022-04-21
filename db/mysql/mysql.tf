@@ -28,7 +28,7 @@ curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/a
 cd /tmp
 unzip -o /tmp/mysql.zip
 cd mysql-main
-mysql -h ${aws_db_instance.default.address} -u${jsondecode(data.aws_secretsmanager_secret_version.latest.secret_string)["RDS_USER"]} -p${jsondecode(data.aws_secretsmanager_secret_version.latest.secret_string)["RDS_PASS"]} < shipping.sql
+mysql -h ${aws_db_instance.default.address} -u${jsondecode(data.aws_secretsmanager_secret_version.latest.secret_string)["RDS_USER"]} -p${jsondecode(data.aws_secretsmanager_secret_version.latest.secret_string)["RDS_PASS"]} <mysql-main/shipping.sql
 EOF
   }
 }
