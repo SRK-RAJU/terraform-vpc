@@ -1,6 +1,6 @@
 resource "aws_db_instance" "default" {
 
-  identifier             = "roboshop-${var.ENV}"
+ identifier             = "default-${var.ENV}"
   allocated_storage      = 10
   engine                 = "mysql"
   engine_version         = "5.7"
@@ -15,11 +15,12 @@ resource "aws_db_instance" "default" {
 }
 
 resource "aws_db_subnet_group" "mysql" {
-  name       = "mysql-${var.ENV}"
+  name       = "roboshop-mysql-${var.ENV}"
   subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS_IDS
 
   tags = {
-    Name = "MySQL DB Subnet Group"
+    #Name = "MySQL DB Subnet Group"
+    Name = "roboshop-mysql-${var.ENV}"
   }
 }
 
