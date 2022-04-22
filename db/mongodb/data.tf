@@ -16,7 +16,7 @@ data "terraform_remote_state" "vpc" {
 data "terraform_remote_state" "alb" {
   backend = "s3"
   config = {
-    bucket = "terraform-b62"
+    bucket = "terra-raj"
     key    = "mutable/alb/${var.ENV}/terraform.tfstate"
     region = "us-east-1"
   }
