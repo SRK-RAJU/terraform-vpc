@@ -14,13 +14,6 @@ data "terraform_remote_state" "vpc" {
 }
 
 
-data "aws_secretsmanager_secret" "common" {
-  name = "common/ssh"
-}
-
-data "aws_secretsmanager_secret_version" "secret" {
-  secret_id = data.aws_secretsmanager_secret.common.id
-}
 #data "aws_secretsmanager_secret" "secret" {
  # name = "secrets/roboshop/${var.ENV}"
   #name=var.ENV
@@ -28,7 +21,7 @@ data "aws_secretsmanager_secret_version" "secret" {
 #}
 
 data "aws_secretsmanager_secret" "dev" {
-  name = "dev-env"
+  name = "roboshop-${var.ENV}"
 }
 
 data "aws_secretsmanager_secret_version" "latest" {
