@@ -13,13 +13,29 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-data "aws_secretsmanager_secret" "secret" {
+
+data "aws_secretsmanager_secret" "common" {
+  name = "common/ssh"
+}
+
+data "aws_secretsmanager_secret_version" "secret" {
+  secret_id = data.aws_secretsmanager_secret.common.id
+}
+#data "aws_secretsmanager_secret" "secret" {
  # name = "secrets/roboshop/${var.ENV}"
-  name=var.ENV
+  #name=var.ENV
   #name="dev"
+#}
+
+data "aws_secretsmanager_secret" "dev" {
+  name = "dev-env"
 }
 
 data "aws_secretsmanager_secret_version" "latest" {
-  secret_id = data.aws_secretsmanager_secret.secret.id
+  secret_id = data.aws_secretsmanager_secret.dev.id
 }
+
+#data "aws_secretsmanager_secret_version" "latest" {
+  #secret_id = data.aws_secretsmanager_secret.secret.id
+#}
 
