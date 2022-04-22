@@ -14,7 +14,7 @@ data "terraform_remote_state" "vpc" {
 }
 
 data "aws_secretsmanager_secret" "secret" {
-  name = "secrets/dev/${var.ENV}"
+  name = "secrets/roboshop/${var.ENV}"
   #name=var.ENV
   #name="dev"
 }
