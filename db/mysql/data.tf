@@ -21,7 +21,7 @@ data "terraform_remote_state" "vpc" {
 #}
 
 data "aws_secretsmanager_secret" "dev" {
-  name = "roboshop-${var.ENV}"
+  name = "dev"
 }
 
 data "aws_secretsmanager_secret_version" "latest" {
