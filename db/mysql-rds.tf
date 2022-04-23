@@ -9,7 +9,7 @@ resource "aws_db_instance" "mysql" {
   engine                 = "mysql"
   engine_version         = "5.7"
   instance_class         = "db.t3.micro"
-  name                   = "mysqldb"
+  name                   = "db_name"
   username               = local.rds_user
   password               = local.rds_pass
   parameter_group_name   = aws_db_parameter_group.pg.name
