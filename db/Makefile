@@ -1,23 +1,29 @@
 help:
-	@echo "Usage: make dev | make prod"
+	@IFS=$$'\n' ; \
+        help_lines=(`fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//'`); \
+        for help_line in $${help_lines[@]}; do \
+            IFS=$$'#' ; \
+            help_split=($$help_line) ; \
+            help_command=`echo $${help_split[0]} | sed -e 's/^ *//' -e 's/ *$$//'` ; \
+            help_info=`echo $${help_split[2]} | sed -e 's/^ *//' -e 's/ *$$//'` ; \
+            printf "%-15s %s\n" $$help_command $$help_info ; \
+        done
 
-dev dev-apply:
-	rm -rf .terraform
-	terraform init -backend-config=dev-backend.tfvars
-	terraform apply -auto-approve -var-file=dev.tfvars
+clean:
+	@rm -rf .terraform
 
-prod prod-apply:
-	rm -rf .terraform
-	terraform init -backend-config=prod-backend.tfvars
-	terraform apply -auto-approve -var-file=prod.tfvars
+dev-apply: clean ## Create Dev Environment
+	@terraform init -backend-config=env/dev-backend.tfvars
+	@terraform apply -auto-approve -var-file=env/dev.tfvars
 
-dev-destroy:
-	rm -rf .terraform
-	terraform init -backend-config=dev-backend.tfvars
-	terraform destroy -auto-approve -var-file=dev.tfvars
+prod-apply: clean ## Create Prod Environment
+	@terraform init -backend-config=env/prod-backend.tfvars
+	@terraform apply -auto-approve -var-file=env/prod.tfvars
 
-prod-destroy:
-	rm -rf .terraform
-	terraform init -backend-config=prod-backend.tfvars
-	terraform destroy -auto-approve -var-file=prod.tfvars
+dev-destroy: clean ## Destroy Dev Environment
+	@terraform init -backend-config=env/dev-backend.tfvars
+	@terraform destroy -auto-approve -var-file=env/dev.tfvars
 
+prod-destroy: clean ## Destroy Prod Environment
+	@terraform init -backend-config=env/prod-backend.tfvars
+	@terraform destroy -auto-approve -var-file=env/prod.tfvars
