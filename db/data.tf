@@ -8,7 +8,7 @@ data "terraform_remote_state" "vpc" {
 }
 
 data "aws_secretsmanager_secret" "secrets" {
-  name = var.ENV
+  name = mysql-"${var.ENV}"
 }
 
 data "aws_secretsmanager_secret_version" "secrets-version" {
