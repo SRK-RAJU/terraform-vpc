@@ -6,8 +6,11 @@ resource "aws_db_instance" "mysql" {
   engine_version         = "5.7"
   instance_class         = "db.t3.micro"
   name                   = "MYSQLDB"
-  username               = local.rds_user
-  password               = local.rds_pass
+  #username               = local.rds_user
+  #password               = local.rds_pass
+  username               = admin
+  password               = admin123
+
   parameter_group_name   = aws_db_parameter_group.pg.name
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.mysql.id]
@@ -85,15 +88,15 @@ resource "aws_route53_record" "mysql" {
   records = [aws_db_instance.mysql.address]
 }
 
-resource "null_resource" "schema-apply" {
-  //depends_on = [aws_route53_record.mysql]
-  provisioner "local-exec" {
-    command = <<EOF
-sudo yum install mariadb -y
-curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip"
-cd /tmp
-unzip -o /tmp/mysql.zip
-mysql -h${aws_db_instance.mysql.address} -u${local.rds_user} -p${local.rds_pass} <mysql-main/shipping.sql
-EOF
-  }
-}
+#resource "null_resource" "schema-apply" {
+ # //depends_on = [aws_route53_record.mysql]
+ # provisioner "local-exec" {
+    #command = <<EOF
+#sudo yum install mariadb -y
+#curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip"
+#cd /tmp
+#unzip -o /tmp/mysql.zip
+#mysql -h${aws_db_instance.mysql.address} -u${local.rds_user} -p${local.rds_pass} <mysql-main/shipping.sql
+#EOF
+ # }
+#}
