@@ -1,7 +1,7 @@
 resource "aws_db_instance" "mysql" {
   allocated_storage      = 10
   #identifier             = "mysqldb-${var.ENV}"
-  identifier             = "MYSQL-${var.ENV}"
+  identifier             = "mysql-${var.ENV}"
   engine                 = "mysql"
   engine_version         = "5.7"
   instance_class         = "db.t3.micro"
@@ -10,7 +10,6 @@ resource "aws_db_instance" "mysql" {
   #password               = local.rds_pass
   username               = admin
   password               = admin123
-
   parameter_group_name   = aws_db_parameter_group.pg.name
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.mysql.id]
