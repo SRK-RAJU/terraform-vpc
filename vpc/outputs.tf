@@ -45,7 +45,6 @@ output "PUBLIC_HOSTED_ZONEID" {
 output "PUBLIC_HOSTED_ZONE_NAME" {
   value = data.aws_route53_zone.public.name
 }
-
 output "PUBLIC_ACM_ARN" {
   value = "arn:aws:acm:us-east-1:739561048503:certificate/b1e2e0f8-9c8e-413a-9e9c-a270df2ef9c7"
 }
