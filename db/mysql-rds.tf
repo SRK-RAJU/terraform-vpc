@@ -1,17 +1,17 @@
 locals {
   rds_user = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_USER"]
   rds_pass = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_PASS"]
-  DEFAULT_VPC_CIDR = split(",", data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR)
-  ALL_CIDR         = concat(data.terraform_remote_state.vpc.outputs.ALL_VPC_CIDR, local.DEFAULT_VPC_CIDR)
+ DEFAULT_VPC_CIDR = split(",", data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR)
+ ALL_CIDR         = concat(data.terraform_remote_state.vpc.outputs.ALL_VPC_CIDR, local.DEFAULT_VPC_CIDR)
 }
 
 resource "aws_db_instance" "mysql" {
   allocated_storage      = 10
-  identifier             = "mysql-${var.ENV}"
+  identifier             = "mysqldb-${var.ENV}"
   engine                 = "mysql"
   engine_version         = "5.7"
   instance_class         = "db.t3.micro"
-  name                   = "mysqldb.ctfkbpezmfa1.us-east-1.rds.amazonaws.com"
+  name                   = "MYSQL"
   username               = local.rds_user
   password               = local.rds_pass
   parameter_group_name   = aws_db_parameter_group.pg.name
