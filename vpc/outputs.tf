@@ -30,7 +30,7 @@ output "DEFAULT_VPC_CIDR" {
   value = var.DEFAULT_VPC_CIDR
 }
 
-output "INTERNAL_HOSTED_ZONEID" {
+output "PRIVATE_HOSTED_ID" {
   value = data.aws_route53_zone.internal.zone_id
 }
 
