@@ -5,7 +5,7 @@ resource "aws_db_instance" "mysql" {
   engine                 = "mysql"
   engine_version         = "5.7"
   instance_class         = "db.t3.micro"
-  name                   = "MYSQLDB"
+  name                   = "srk-mysql"
   #username               = local.rds_user
   #password               = local.rds_pass
   username               = "admin"
