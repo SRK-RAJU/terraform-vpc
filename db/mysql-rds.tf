@@ -80,8 +80,8 @@ resource "aws_db_subnet_group" "subnet-group" {
 }
 
 resource "aws_route53_record" "mysql" {
-  zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ID
-  #zone_id = data.terraform_remote_state.vpc.outputs.internal
+  #zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ID
+  zone_id = "Z0154279NRNJNHPQSM7G"
   name    = "mysql-${var.ENV}"
   type    = "CNAME"
   ttl     = "300"
