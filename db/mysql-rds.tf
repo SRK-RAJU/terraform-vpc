@@ -73,7 +73,7 @@ resource "aws_db_parameter_group" "pg" {
 
 resource "aws_db_subnet_group" "subnet-group" {
   name       = "mysqldb-subnet-group-${var.ENV}"
-  subnet_ids = [data.terraform_remote_state.vpc.outputs.PUBLIC_SUBNETS_IDS]
+  subnet_ids = [data.terraform_remote_state.vpc.outputs.PUBLIC_SUBNETS]
 
   tags = {
     Name = "mysqldb-subnet-group-${var.ENV}"
