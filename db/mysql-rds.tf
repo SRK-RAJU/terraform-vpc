@@ -1,3 +1,13 @@
+locals {
+  #rds_user = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_MYSQL_USER"]
+#  rds_pass = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_MYSQL_PASS"]
+  rds_user="admin"
+  rds_pass="admin123"
+}
+
+
+
+
 resource "aws_db_instance" "mysql" {
   allocated_storage      = 10
   #identifier             = "mysqldb-${var.ENV}"
@@ -6,10 +16,10 @@ resource "aws_db_instance" "mysql" {
   engine_version         = "5.7"
   instance_class         = "db.t3.micro"
   db_name                 = "SRKRDS"
-  #username               = local.rds_user
-  #password               = local.rds_pass
-  username               = "admin"
-  password               = "admin123"
+  username               = local.rds_user
+  password               = local.rds_pass
+  #username               = "admin"
+  #password               = "admin123"
   parameter_group_name   = aws_db_parameter_group.pg.name
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.mysql.id]
@@ -109,7 +119,7 @@ sudo yum install mariadb -y
 curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip"
 cd /tmp
 unzip -o /tmp/mysql.zip
-mysql -h${aws_db_instance.mysql.address} -u -p <mysql-main/shipping.sql
+mysql -h${aws_db_instance.mysql.address} -u${local.rds_user} -p${local.rds_pass} <mysql-main/shipping.sql
 EOF
   }
 }
