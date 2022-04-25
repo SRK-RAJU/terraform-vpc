@@ -71,9 +71,20 @@ resource "aws_db_parameter_group" "pg" {
   family = "mysql5.7"
 }
 
+
+data "aws_subnet" "subnet1" {
+  id = "subnet-0ad57dc9ebbaf5a77"
+}
+
+data "aws_subnet" "subnet2" {
+  id = "subnet-0cf2e0411710c64c7"
+}
+
 resource "aws_db_subnet_group" "subnet-group" {
   name       = "mysqldb-subnet-group-${var.ENV}"
-  subnet_ids = data.terraform_remote_state.vpc.outputs.PUBLIC_SUBNETS_IDS
+  description = "Private subnets for RDS instance"
+  subnet_ids  = [data.aws_subnet.subnet1.id, data.aws_subnet.subnet2.id]
+  #subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS_IDS
   #subnet_ids = [aws_subnet.frontend.id, aws_subnet.backend.id]
 
   tags = {
