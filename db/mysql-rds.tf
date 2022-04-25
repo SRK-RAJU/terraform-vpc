@@ -109,7 +109,7 @@ sudo yum install mariadb -y
 curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip"
 cd /tmp
 unzip -o /tmp/mysql.zip
-mysql -h${aws_db_instance.mysql.address} -u username=admin'@'172.31.27.206' -p password='YES'   <mysql-main/shipping.sql
+mysql -h${aws_db_instance.mysql.address} -u username='@'172.31.27.206' -p password='YES'   <mysql-main/shipping.sql
 EOF
   }
 }
