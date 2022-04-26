@@ -46,13 +46,21 @@ resource "aws_security_group" "mysql" {
   description = "mysql-${var.ENV}"
   # vpc_id      = data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_ID
   vpc_id      = data.terraform_remote_state.vpc.outputs.VPC_ID
-  ingress {
+  ingress = [ {
     description = "APP"
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
+    cidr_blocks=local.ALL_CIDR
+  #  cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    security_groups  = []
+    self             = false
+
+
   }
+    ]
 
   egress {
     from_port        = 0
