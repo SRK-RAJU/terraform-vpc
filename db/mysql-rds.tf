@@ -40,7 +40,8 @@ resource "aws_db_instance" "mysql" {
 resource "aws_security_group" "mysql" {
   name        = "mysql-${var.ENV}"
   description = "mysql-${var.ENV}"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_ID
+ # vpc_id      = data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_ID
+  vpc_id      = data.terraform_remote_state.vpc.outputs.VPC_ID
 
   ingress = [
     {
@@ -49,7 +50,8 @@ resource "aws_security_group" "mysql" {
       to_port          = 3306
       protocol         = "tcp"
      # cidr_blocks      = local.ALL_CIDR
-      cidr_blocks   = [data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]
+      cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
+     # cidr_blocks   = [data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -82,20 +84,20 @@ resource "aws_db_parameter_group" "pg" {
 }
 
 
-data "aws_subnet" "subnet1" {
-  id = "subnet-0ad57dc9ebbaf5a77"
-}
+#data "aws_subnet" "subnet1" {
+ # id = "subnet-0ad57dc9ebbaf5a77"
+#}
 
-data "aws_subnet" "subnet2" {
-  id = "subnet-0cf2e0411710c64c7"
-}
+#data "aws_subnet" "subnet2" {
+ # id = "subnet-0cf2e0411710c64c7"
+#}
 
 resource "aws_db_subnet_group" "subnet-group" {
   name       = "mysqldb-subnet-group-${var.ENV}"
   description = "Private subnets for RDS instance"
-  subnet_ids  = [data.aws_subnet.subnet1.id, data.aws_subnet.subnet2.id]
+ # subnet_ids  = [data.aws_subnet.subnet1.id, data.aws_subnet.subnet2.id]
+  subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS
   #subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS_IDS
-  #subnet_ids = [aws_subnet.frontend.id, aws_subnet.backend.id]
 
   tags = {
     Name = "mysqldb-subnet-group-${var.ENV}"
@@ -104,8 +106,10 @@ resource "aws_db_subnet_group" "subnet-group" {
 
 resource "aws_route53_record" "mysql" {
   #zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ID
-  zone_id = "Z0154279NRNJNHPQSM7G"
-  name    = "mysql-${var.ENV}"
+  zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
+#  zone_id = "Z0154279NRNJNHPQSM7G"
+  #name    = "mysql-${var.ENV}"
+  name    = "mysql-${var.ENV}.roboshop.internal"
   type    = "CNAME"
   ttl     = "300"
   records = [aws_db_instance.mysql.address]
@@ -119,7 +123,8 @@ sudo yum install mariadb -y
 curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip"
 cd /tmp
 unzip -o /tmp/mysql.zip
-mysql -h${aws_db_instance.mysql.address} -u${local.rds_user} -p${local.rds_pass} <mysql-main/shipping.sql
+cd mysql-main
+mysql -h${aws_db_instance.mysql.address} -u${local.rds_user} -p${local.rds_pass} <shipping.sql
 EOF
   }
 }
