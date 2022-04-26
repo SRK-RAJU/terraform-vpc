@@ -26,13 +26,13 @@ output "PRIVATE_SUBNETS_CIDR" {
 }
 
 output "DEFAULT_VPC_ID" {
-  #value = var.DEFAULT_VPC_ID
-  value = data.aws_vpc.default.id
+  value = var.DEFAULT_VPC_ID
+ # value = data.aws_vpc.default.id
 }
 
 output "DEFAULT_VPC_CIDR" {
-  #value = var.DEFAULT_VPC_CIDR
-  value = data.aws_vpc.default.cidr_block
+  value = var.DEFAULT_VPC_CIDR
+  #value = data.aws_vpc.default.cidr_block
 }
 
 output "PRIVATE_HOSTED_ZONE_ID" {
@@ -52,6 +52,9 @@ output "PUBLIC_HOSTED_ZONE_ID" {
 #output "PUBLIC_HOSTED_ZONE_NAME" {
   #value = data.aws_route53_zone.PUBLIC_HOSTED_ZONE_NAME.name
 #}
+output "ALL_VPC_CIDR" {
+  value = local.ALL_VPC_CIDR
+}
 
 output "PUBLIC_ACM_ARN" {
   value = "arn:aws:acm:us-east-1:739561048503:certificate/b1e2e0f8-9c8e-413a-9e9c-a270df2ef9c7"

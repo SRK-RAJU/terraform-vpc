@@ -12,5 +12,7 @@ variable "PRIVATE_SUBNET_CIDR" {}
 
 variable "PRIVATE_HOSTED_ZONE_ID" {}
 variable "PUBLIC_HOSTED_ZONE_ID" {}
-variable "ALL_CIDR" {}
+variable "ALL_VPC_CIDR" {}
+variable "VPC_CIDR_MAIN" {}
+variable "VPC_CIDR_ADDON" {}
 
