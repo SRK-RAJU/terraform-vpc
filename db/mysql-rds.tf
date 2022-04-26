@@ -52,7 +52,7 @@ resource "aws_security_group" "mysql" {
     to_port     = 3306
     protocol    = "tcp"
    # cidr_blocks=local.ALL_CIDR
-   cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
+   cidr_blocks = concat([data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR], tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
     ipv6_cidr_blocks = []
     prefix_list_ids  = []
     security_groups  = []
