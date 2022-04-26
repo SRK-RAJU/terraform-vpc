@@ -46,49 +46,28 @@ resource "aws_security_group" "mysql" {
   description = "mysql-${var.ENV}"
   # vpc_id      = data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_ID
   vpc_id      = data.terraform_remote_state.vpc.outputs.VPC_ID
+  ingress {
+    description = "APP"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
+  }
 
-  dynamic "ingress" {
-    for_each = local.ALL_CIDR
-    content {
-      cidr = ingress.value
-
-      # ingress = [
-      # {
-      description      = "MYSQL"
-      from_port        = 3306
-      to_port          = 3306
-      protocol         = "tcp"
-      # cidr_blocks      = local.ALL_CIDR
-      # cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
-      #cidr_blocks = concat([data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR], tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
-      # cidr_blocks   = [data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = []
-      self             = false
-    }
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 
 
-    egress = [
-      {
-        description      = "egress"
-        from_port        = 0
-        to_port          = 0
-        protocol         = "-1"
-        cidr_blocks      = ["0.0.0.0/0"]
-        ipv6_cidr_blocks = ["::/0"]
-        prefix_list_ids  = []
-        security_groups  = []
-        self             = false
-      }
-    ]
 
     tags = {
       Name = "mysql-${var.ENV}"
     }
-  }
 }
-
 resource "aws_db_parameter_group" "pg" {
   name   = "mysql-${var.ENV}-pg"
   family = "mysql5.7"
