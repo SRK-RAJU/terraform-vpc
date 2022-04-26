@@ -1,14 +1,14 @@
 locals {
   rds_user = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_USER"]
  rds_pass = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_PASS"]
-  D_VPC_CIDR = split(",", data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR)
-  ALL_CIDR         = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, local.D_VPC_CIDR)
+ # D_VPC_CIDR = split(",", data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR)
+#  ALL_CIDR         = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, local.D_VPC_CIDR)
  # rds_user="admin"
 #  rds_pass="admin123"
 }
-output "all_vpc" {
-  value = local.ALL_CIDR
-}
+#output "all_vpc" {
+ # value = local.ALL_CIDR
+#}
 
 
 
@@ -51,8 +51,8 @@ resource "aws_security_group" "mysql" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks=local.ALL_CIDR
-  #  cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
+   # cidr_blocks=local.ALL_CIDR
+   cidr_blocks = concat(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_CIDR, tolist([data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]))
     ipv6_cidr_blocks = []
     prefix_list_ids  = []
     security_groups  = []
@@ -62,20 +62,22 @@ resource "aws_security_group" "mysql" {
   }
     ]
 
-  egress {
+  egress = [ {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
+]
 
 
     tags = {
       Name = "mysql-${var.ENV}"
     }
 }
+
+
 resource "aws_db_parameter_group" "pg" {
   name   = "mysql-${var.ENV}-pg"
   family = "mysql5.7"
