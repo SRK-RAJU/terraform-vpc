@@ -29,3 +29,11 @@ data "aws_ami" "ami" {
  # name_regex  = "base"
   #owners      = ["self"]
 }
+data "terraform_remote_state" "alb" {
+  backend = "s3"
+  config = {
+    bucket = "terra-raj"
+    key    = "mutable/alb/${var.ENV}/terraform.tfstate"
+    region = "us-east-1"
+  }
+}

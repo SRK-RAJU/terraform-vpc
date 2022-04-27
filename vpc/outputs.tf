@@ -36,22 +36,23 @@ output "DEFAULT_VPC_CIDR" {
 }
 
 output "PRIVATE_HOSTED_ZONE_ID" {
- # value = data.aws_route53_zone.internal.zone_id
-  value = var.PRIVATE_HOSTED_ZONE_ID
+ value = data.aws_route53_zone.internal.zone_id
+ # value = var.PRIVATE_HOSTED_ZONE_ID
 }
 
-#output "PRIVATE_HOSTED_ZONE_ID" {
-  #value = data.aws_route53_zone.internal.name
-#}
+output "PRIVATE_HOSTED_ZONE_NAME" {
+  value = data.aws_route53_zone.internal.name
+}
 
 output "PUBLIC_HOSTED_ZONE_ID" {
-  #value = data.aws_route53_zone.public.zone_id
-  value=var.PUBLIC_HOSTED_ZONE_ID
+  value = data.aws_route53_zone.public.zone_id
+  #value=var.PUBLIC_HOSTED_ZONE_ID
 }
 
-#output "PUBLIC_HOSTED_ZONE_NAME" {
-  #value = data.aws_route53_zone.PUBLIC_HOSTED_ZONE_NAME.name
-#}
+output "PUBLIC_HOSTED_ZONE_NAME" {
+  value = data.aws_route53_zone.public.name
+  #value = var.PUBLIC_HOSTED_ZONE_NAME
+}
 output "ALL_VPC_CIDR" {
   value = local.ALL_VPC_CIDR
 }
