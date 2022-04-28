@@ -15,55 +15,6 @@ resource "aws_ec2_tag" "mondodb" {
  # value       = "mongodb-${var.ENV}"
   value       = "mongodb-${var.ENV}"
 }
-resource "null_resource" "db-deploy" {
-  #depends_on = ["aws_spot_instance_request.mongodb"]
-  triggers = {
-    abc = aws_spot_instance_request.mongodb.private_ip
-  }
-  provisioner "remote-exec" {
-    connection {
-      user     = local.ssh_user
-      password = local.ssh_pass
-      host     = aws_spot_instance_request.mongodb.private_ip
-      type     = "ssh"
-      port=22
-      agent=false
-      timeout = "1m"
-
-
-    }
-
-    inline = [
-      "sudo apt-get -qq install python",
-      "ansible-pull -i localhost,  -U https://github.com/raghudevopsb61/ansible.git roboshop-pull.yml -e COMPONENT=mongodb  -e ENV=${var.ENV}"
-    ]
-  }
-}
-
-#resource "null_resource" "ansible-apply" {
- #$ provisioner "remote-exec" {
-   # connection {
-    #  type ="ssh"
-    #  host     = aws_spot_instance_request.mongodb.private_ip
-    #  user     = local.ssh_user
-    #  password = local.ssh_pass
-    #  #password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
-   # }
-   # inline = [
-
-     # "sudo yum install python3-pip -y",
-    #  "python -m pip install --upgrade 'pymongo[srv]'",
-     # "sudo pip3 install pip --upgrade",
-     # "sudo pip3 install ansible",
-    #  "sudo pip install certifi",
-
-
-    #  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"
-      #"ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e ENV=${var.ENV} -e COMPONENT=mongodb"
-     # "ansible-pull -U https://DevOps-Batches@dev.azure.com/DevOps-Batches/DevOps60/_git/ansible roboshop-pull.yml -e ENV=${var.ENV} -e COMPONENT=mongodb -e APP_VERSION="
- #   ]
- # }
-#}
 
 resource "aws_route53_record" "mongodb" {
   zone_id = data.terraform_remote_state.vpc.outputs.PUBLIC_HOSTED_ZONE_ID
@@ -121,3 +72,52 @@ resource "aws_security_group" "allow-mongodb" {
     Name = "mongodb-${var.ENV}"
   }
 }
+resource "null_resource" "db-deploy" {
+  #depends_on = ["aws_spot_instance_request.mongodb"]
+  triggers = {
+    abc = aws_spot_instance_request.mongodb.private_ip
+  }
+  provisioner "remote-exec" {
+    connection {
+      user     = local.ssh_user
+      password = local.ssh_pass
+      host     = aws_spot_instance_request.mongodb.private_ip
+      type     = "ssh"
+      port=22
+      agent=false
+      timeout = "1m"
+
+
+    }
+
+    inline = [
+      "sudo apt-get -qq install python",
+      "ansible-pull -i localhost,  -U https://github.com/raghudevopsb61/ansible.git roboshop-pull.yml -e COMPONENT=mongodb  -e ENV=${var.ENV}"
+    ]
+  }
+}
+
+#resource "null_resource" "ansible-apply" {
+#$ provisioner "remote-exec" {
+# connection {
+#  type ="ssh"
+#  host     = aws_spot_instance_request.mongodb.private_ip
+#  user     = local.ssh_user
+#  password = local.ssh_pass
+#  #password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
+# }
+# inline = [
+
+# "sudo yum install python3-pip -y",
+#  "python -m pip install --upgrade 'pymongo[srv]'",
+# "sudo pip3 install pip --upgrade",
+# "sudo pip3 install ansible",
+#  "sudo pip install certifi",
+
+
+#  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"
+#"ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e ENV=${var.ENV} -e COMPONENT=mongodb"
+# "ansible-pull -U https://DevOps-Batches@dev.azure.com/DevOps-Batches/DevOps60/_git/ansible roboshop-pull.yml -e ENV=${var.ENV} -e COMPONENT=mongodb -e APP_VERSION="
+#   ]
+# }
+#}
