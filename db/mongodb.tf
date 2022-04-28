@@ -20,6 +20,7 @@ resource "aws_ec2_tag" "mondodb" {
 resource "null_resource" "ansible-apply" {
   provisioner "remote-exec" {
     connection {
+      type ="ssh"
       host     = aws_spot_instance_request.mongodb.private_ip
       user     = local.ssh_user
       password = local.ssh_pass
@@ -28,8 +29,11 @@ resource "null_resource" "ansible-apply" {
     inline = [
 
       "sudo yum install python3-pip -y",
+      "python -m pip install --upgrade 'pymongo[srv]'",
       "sudo pip3 install pip --upgrade",
       "sudo pip3 install ansible",
+      "sudo pip install certifi",
+
 
     #  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"
       #"ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e ENV=${var.ENV} -e COMPONENT=mongodb"
