@@ -27,7 +27,7 @@ resource "null_resource" "ansible-apply" {
     }
     inline = [
     #  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"\
-      "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}  -e APP_VERSION="
+      "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=docdb -e ENV=${var.ENV}  -e APP_VERSION="
     ]
   }
 }
