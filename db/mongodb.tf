@@ -21,12 +21,13 @@ resource "null_resource" "ansible-apply" {
   provisioner "remote-exec" {
     connection {
       host     = aws_spot_instance_request.spot-instance.private_ip
-      user     = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
-      password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
+      user     = local.ssh_user
+      password = local.ssh_pass
+      #password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
     }
     inline = [
     #  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"\
-      "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV} -e COMPONENT=mongodb -e APP_VERSION="
+      "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}  -e APP_VERSION="
     ]
   }
 }
