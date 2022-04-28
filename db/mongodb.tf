@@ -1,8 +1,10 @@
 resource "aws_docdb_cluster" "docdb" {
   cluster_identifier = "roboshop-${var.ENV}"
   engine             = "docdb"
-  master_username    = "admin1"
-  master_password    = "roboshop1"
+  #master_username    = "admin1"
+  master_username    = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
+  #master_password    = "roboshop1"
+  master_password    = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
   ## This is just for lab purpose
   skip_final_snapshot  = true
   db_subnet_group_name = aws_docdb_subnet_group.docdb.name
@@ -102,9 +104,10 @@ resource "aws_security_group" "allow-mongodb" {
 resource "null_resource" "db-deploy" {
   provisioner "remote-exec" {
     connection {
+      host     = aws_spot_instance_request.mongodb.private_ip
       user     = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
       password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
-      host     = aws_spot_instance_request.mongodb.private_ip
+
       type     = "ssh"
       port=22
       agent=false
