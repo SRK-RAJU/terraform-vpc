@@ -9,11 +9,11 @@ resource "aws_spot_instance_request" "spot-instance" {
   }
 }
 
-resource "aws_ec2_tag" "tag" {
+resource "aws_ec2_tag" "mondodb" {
   resource_id = aws_spot_instance_request.spot-instance.spot_instance_id
   key         = "Name"
  # value       = "mongodb-${var.ENV}"
-  value       = "tag-${var.ENV}"
+  value       = "mongodb-${var.ENV}"
 }
 
 
