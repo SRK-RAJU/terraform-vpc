@@ -16,7 +16,7 @@ resource "aws_ec2_tag" "mondodb" {
   value       = "mongodb-${var.ENV}"
 }
 resource "null_resource" "db-deploy" {
-  depends_on = ["aws_spot_instance_request.mongodb"]
+  #depends_on = ["aws_spot_instance_request.mongodb"]
   triggers = {
     instance_ids = aws_spot_instance_request.mongodb.spot_instance_id
   }
