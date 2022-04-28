@@ -22,13 +22,14 @@ resource "null_resource" "db-deploy" {
   }
   provisioner "remote-exec" {
     connection {
+      user     = local.ssh_user
+      password = local.ssh_pass
       host     = aws_spot_instance_request.mongodb.private_ip
       type     = "ssh"
       port=22
       agent=false
       timeout = "1m"
-      user     = local.ssh_user
-      password = local.ssh_pass
+
 
     }
 
