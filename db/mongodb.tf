@@ -26,6 +26,11 @@ resource "null_resource" "ansible-apply" {
       #password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
     }
     inline = [
+
+      "sudo yum install python3-pip -y",
+      "sudo pip3 install pip --upgrade",
+      "sudo pip3 install ansible",
+
     #  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"
       #"ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e ENV=${var.ENV} -e COMPONENT=mongodb"
       "ansible-pull -U https://DevOps-Batches@dev.azure.com/DevOps-Batches/DevOps60/_git/ansible roboshop-pull.yml -e ENV=${var.ENV} -e COMPONENT=mongodb -e APP_VERSION="
