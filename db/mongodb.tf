@@ -1,4 +1,4 @@
-resource "aws_spot_instance_request" "spot-instance" {
+resource "aws_spot_instance_request" "mongodb" {
   ami                    = data.aws_ami.ami.id
   instance_type          = var.MONGODB_INSTANCE_TYPE
   wait_for_fulfillment   = true
@@ -10,7 +10,7 @@ resource "aws_spot_instance_request" "spot-instance" {
 }
 
 resource "aws_ec2_tag" "mondodb" {
-  resource_id = aws_spot_instance_request.spot-instance.spot_instance_id
+  resource_id = aws_spot_instance_request.mongodb.spot_instance_id
   key         = "Name"
  # value       = "mongodb-${var.ENV}"
   value       = "mongodb-${var.ENV}"
@@ -20,14 +20,14 @@ resource "aws_ec2_tag" "mondodb" {
 resource "null_resource" "ansible-apply" {
   provisioner "remote-exec" {
     connection {
-      host     = aws_spot_instance_request.spot-instance.private_ip
+      host     = aws_spot_instance_request.mongodb.private_ip
       user     = local.ssh_user
       password = local.ssh_pass
       #password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
     }
     inline = [
-    #  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"\
-      "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=DocumentDB -e ENV=${var.ENV}  -e APP_VERSION="
+    #  "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"
+      "ansible-pull -U https://github.com/raghudevopsb62/ansible roboshop-pull.yml -e COMPONENT=mongodb -e ENV=${var.ENV}"
     ]
   }
 }
@@ -37,7 +37,7 @@ resource "aws_route53_record" "mongodb" {
   name    = "mongodb-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PUBLIC_HOSTED_ZONE_NAME}"
   type    = "A"
   ttl     = "300"
-  records = [aws_spot_instance_request.spot-instance.private_ip]
+  records = [aws_spot_instance_request.mongodb.private_ip]
 }
 
 resource "aws_security_group" "allow-mongodb" {
