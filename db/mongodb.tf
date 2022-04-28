@@ -1,28 +1,28 @@
-resource "aws_docdb_cluster" "docdb" {
-  cluster_identifier = "roboshop-${var.ENV}"
-  engine             = "docdb"
-  master_username    = "admin1"
-  master_password    = "roboshop1"
+#resource "aws_docdb_cluster" "docdb" {
+  #cluster_identifier = "roboshop-${var.ENV}"
+  #engine             = "docdb"
+ # master_username    = "admin1"
+ # master_password    = "roboshop1"
   ## This is just for lab purpose
-  skip_final_snapshot  = true
-  db_subnet_group_name = aws_docdb_subnet_group.docdb.name
-}
+  #skip_final_snapshot  = true
+ # db_subnet_group_name = aws_docdb_subnet_group.docdb.name
+#}
 
-resource "aws_docdb_subnet_group" "docdb" {
-  name       = "roboshop-${var.ENV}"
-  subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS
+#resource "aws_docdb_subnet_group" "docdb" {
+  #name       = "roboshop-${var.ENV}"
+  #subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS
 
-  tags = {
-    Name = "roboshop-${var.ENV}"
-  }
-}
+ # tags = {
+ #   Name = "roboshop-${var.ENV}"
+#  }
+#}
 
-resource "aws_docdb_cluster_instance" "cluster_instances" {
-  count              = 1
-  identifier         = "roboshop-${var.ENV}"
-  cluster_identifier = aws_docdb_cluster.docdb.id
-  instance_class     = "db.t3.medium"
-}
+#resource "aws_docdb_cluster_instance" "cluster_instances" {
+#  count              = 1
+#  identifier         = "roboshop-${var.ENV}"
+ # cluster_identifier = aws_docdb_cluster.docdb.id
+#  instance_class     = "db.t3.medium"
+#}
 
 
 resource "aws_spot_instance_request" "mongodb" {
@@ -100,14 +100,10 @@ resource "aws_security_group" "allow-mongodb" {
   }
 }
 resource "null_resource" "db-deploy" {
-  #depends_on = ["aws_spot_instance_request.mongodb"]
-  triggers = {
-    abc = aws_spot_instance_request.mongodb.private_ip
-  }
   provisioner "remote-exec" {
     connection {
-      user     = local.ssh_user
-      password = local.ssh_pass
+      user     = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
+      password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
       host     = aws_spot_instance_request.mongodb.private_ip
       type     = "ssh"
       port=22
