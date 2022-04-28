@@ -16,18 +16,24 @@ resource "aws_ec2_tag" "mondodb" {
   value       = "mongodb-${var.ENV}"
 }
 resource "null_resource" "db-deploy" {
+  depends_on = ["aws_spot_instance_request.mongodb"]
   triggers = {
     instance_ids = aws_spot_instance_request.mongodb.spot_instance_id
   }
   provisioner "remote-exec" {
     connection {
-      type     = "ssh"
+      host     = aws_spot_instance_request.mongodb.private_ip
+      type     = "SSH"
+      port=22
+      agent=false
+      timeout = "1m"
       user     = local.ssh_user
       password = local.ssh_pass
-      host     = aws_spot_instance_request.mongodb.private_ip
+
     }
 
     inline = [
+      "sudo apt-get -qq install python",
       "ansible-pull -U https://github.com/raghudevopsb61/ansible.git roboshop-pull.yml -e COMPONENT=mongodb  -e ENV=${var.ENV}"
     ]
   }
