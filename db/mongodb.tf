@@ -40,13 +40,13 @@ resource "aws_docdb_cluster_instance" "cluster_instances" {
   #}
 #}
 
-resource "aws_ec2_tag" "mondodb" {
+#resource "aws_ec2_tag" "mondodb" {
   #resource_id = aws_spot_instance_request.mongodb.spot_instance_id
-  resource_id = aws_docdb_cluster_instance.cluster_instances.cluster_identifier
-  key         = "Name"
+ #resource_id = aws_docdb_cluster_instance.cluster_instances.
+  #key         = "Name"
  # value       = "mongodb-${var.ENV}"
-  value       = "mongodb-${var.ENV}"
-}
+ # value       = "mongodb-${var.ENV}"
+#}
 resource "aws_docdb_cluster_parameter_group" "pg" {
   name   = "mongodb-${var.ENV}-pg"
   description = "mongodb-${var.ENV}-pg"
