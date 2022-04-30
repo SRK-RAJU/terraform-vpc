@@ -127,9 +127,9 @@ unzip -o mongodb.zip
 cd mongodb-main
 wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
-mongo --ssl --host roboshop-dev.ctfkbpezmfa1.us-east-1.docdb.amazonaws.com:27017 --sslCAFile rds-combined-ca-bundle.pem --username admin1 --password roboshop1
-#mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < catalogue.js
-#mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < users.js
+#mongo --ssl --host roboshop-dev.ctfkbpezmfa1.us-east-1.docdb.amazonaws.com:27017 --sslCAFile rds-combined-ca-bundle.pem --username admin1 --password roboshop1
+mongo --ssl --sslCAFile /etc/mongod/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < catalogue.js
+mongo --ssl --sslCAFile /etc/mongod/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < users.js
 EOF
   }
 }
