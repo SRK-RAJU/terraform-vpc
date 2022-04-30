@@ -114,11 +114,11 @@ resource "aws_security_group" "allow-mongodb" {
 resource "null_resource" "schema-mongodb" {
   provisioner "local-exec" {
     command = <<EOF
-sudo yum install mongodb-org -y
-systemctl start mongodb
-systemctl reload mongodb
-systemctl restart mongodb
-systemctl enable mongodb
+#sudo yum install mongodb-org -y
+#systemctl start mongodb
+#systemctl reload mongodb
+#systemctl restart mongodb
+#systemctl enable mongodb
 
 cd /tmp
 curl -s -L -o /tmp/mongodb.zip "https://github.com/roboshop-devops-project/mongodb/archive/main.zip"
