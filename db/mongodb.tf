@@ -104,7 +104,8 @@ resource "aws_security_group" "allow-mongodb" {
 resource "null_resource" "db-deploy" {
   provisioner "remote-exec" {
     connection {
-     # host     = aws_spot_instance_request.mongodb.private_ip
+       #host     = aws_spot_instance_request.mongodb.private_ip
+      host     = aws_docdb_cluster_instance.cluster_instances
       user     = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
       password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
 
