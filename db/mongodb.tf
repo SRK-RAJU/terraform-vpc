@@ -8,6 +8,7 @@ resource "aws_docdb_cluster" "docdb" {
   ## This is just for lab purpose
   skip_final_snapshot  = true
   db_subnet_group_name = aws_docdb_subnet_group.docdb.name
+  db_cluster_parameter_group_name = aws_docdb_cluster_parameter_group.pg.name
   vpc_security_group_ids = [aws_security_group.allow-mongodb.id]
 }
 
@@ -28,22 +29,28 @@ resource "aws_docdb_cluster_instance" "cluster_instances" {
 }
 
 
-resource "aws_spot_instance_request" "mongodb" {
-  ami                    = data.aws_ami.ami.id
-  instance_type          = var.MONGODB_INSTANCE_TYPE
-  wait_for_fulfillment   = true
-  subnet_id              = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS[0]
-  vpc_security_group_ids = [aws_security_group.allow-mongodb.id]
-  tags = {
-    Name = "spot-instance-${var.ENV}"
-  }
-}
+#resource "aws_spot_instance_request" "mongodb" {
+  #ami                    = data.aws_ami.ami.id
+  #instance_type          = var.MONGODB_INSTANCE_TYPE
+  #wait_for_fulfillment   = true
+#  subnet_id              = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS[0]
+  #vpc_security_group_ids = [aws_security_group.allow-mongodb.id]
+ # tags = {
+  #  Name = "spot-instance-${var.ENV}"
+  #}
+#}
 
 resource "aws_ec2_tag" "mondodb" {
-  resource_id = aws_spot_instance_request.mongodb.spot_instance_id
+  #resource_id = aws_spot_instance_request.mongodb.spot_instance_id
+  resource_id = aws_docdb_cluster_instance.cluster_instances.cluster_identifier
   key         = "Name"
  # value       = "mongodb-${var.ENV}"
   value       = "mongodb-${var.ENV}"
+}
+resource "aws_docdb_cluster_parameter_group" "pg" {
+  name   = "mongodb-${var.ENV}-pg"
+  description = "mongodb-${var.ENV}-pg"
+  family = "docdb4.0"
 }
 
 resource "aws_route53_record" "mongodb" {
