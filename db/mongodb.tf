@@ -54,9 +54,9 @@ resource "aws_docdb_cluster_parameter_group" "pg" {
 }
 
 resource "aws_route53_record" "mongodb" {
-  zone_id = data.terraform_remote_state.vpc.outputs.PUBLIC_HOSTED_ZONE_ID
-  name    = "mongodb-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PUBLIC_HOSTED_ZONE_NAME}"
-  type    = "A"
+  zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
+  name    = "mongodb-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_NAME}"
+  type    = "CNAME"
   ttl     = "300"
   records = [aws_docdb_cluster.docdb.endpoint]
  # records = [aws_spot_instance_request.mongodb.private_ip]
