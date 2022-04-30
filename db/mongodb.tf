@@ -8,6 +8,7 @@ resource "aws_docdb_cluster" "docdb" {
   ## This is just for lab purpose
   skip_final_snapshot  = true
   db_subnet_group_name = aws_docdb_subnet_group.docdb.name
+  vpc_security_group_ids = [aws_security_group.allow-mongodb.id]
 }
 
 resource "aws_docdb_subnet_group" "docdb" {
@@ -50,7 +51,8 @@ resource "aws_route53_record" "mongodb" {
   name    = "mongodb-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PUBLIC_HOSTED_ZONE_NAME}"
   type    = "A"
   ttl     = "300"
-  records = [aws_spot_instance_request.mongodb.private_ip]
+  records = [aws_docdb_cluster.docdb.endpoint]
+ # records = [aws_spot_instance_request.mongodb.private_ip]
 }
 
 resource "aws_security_group" "allow-mongodb" {
@@ -101,28 +103,41 @@ resource "aws_security_group" "allow-mongodb" {
     Name = "mongodb-${var.ENV}"
   }
 }
-resource "null_resource" "db-deploy" {
-  provisioner "remote-exec" {
-    connection {
-       #host     = aws_spot_instance_request.mongodb.private_ip
-      host     = aws_docdb_cluster_instance.cluster_instances
-      user     = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
-      password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
 
-      type     = "ssh"
-      port=22
-      agent=false
-      timeout = "1m"
-
-
-    }
-
-    inline = [
-      "sudo apt-get -qq install python",
-      "ansible-pull -i localhost,  -U https://github.com/raghudevopsb61/ansible.git roboshop-pull.yml -e COMPONENT=mongodb  -e ENV=${var.ENV}"
-    ]
+resource "null_resource" "schema-mongodb" {
+  provisioner "local-exec" {
+    command = <<EOF
+cd /tmp
+curl -s -L -o /tmp/mongodb.zip "https://github.com/roboshop-devops-project/mongodb/archive/main.zip"
+unzip -o mongodb.zip
+cd mongodb-main
+mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < catalogue.js
+mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < users.js
+EOF
   }
 }
+#esource "null_resource" "db-deploy" {
+ # provisioner "remote-exec" {
+ #   connection {
+  #     #host     = aws_spot_instance_request.mongodb.private_ip
+   #   host     = aws_docdb_cluster_instance.cluster_instances
+   #   user     = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
+   #   password = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
+
+     # type     = "ssh"
+ #     port=22
+   #   agent=false
+  #    timeout = "1m"
+
+
+  #  }
+
+  #  inline = [
+  #    "sudo apt-get -qq install python",
+ #     "ansible-pull -i localhost,  -U https://github.com/raghudevopsb61/ansible.git roboshop-pull.yml -e COMPONENT=mongodb  -e ENV=${var.ENV}"
+  #  ]
+#  }
+#}
 
 #resource "null_resource" "ansible-apply" {
 #$ provisioner "remote-exec" {
