@@ -114,7 +114,7 @@ resource "aws_security_group" "allow-mongodb" {
 resource "null_resource" "schema-mongodb" {
   provisioner "local-exec" {
     command = <<EOF
-#sudo yum install mongodb-org -y
+sudo yum install mongodb-org -y
 #systemctl start mongodb
 #systemctl reload mongodb
 #systemctl restart mongodb
@@ -125,6 +125,8 @@ curl -s -L -o /tmp/mongodb.zip "https://github.com/roboshop-devops-project/mongo
 
 unzip -o mongodb.zip
 cd mongodb-main
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 mongo --ssl --host roboshop-dev.ctfkbpezmfa1.us-east-1.docdb.amazonaws.com:27017 --sslCAFile rds-combined-ca-bundle.pem --username admin1 --password roboshop1
 #mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < catalogue.js
 #mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < users.js
