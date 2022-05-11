@@ -146,6 +146,13 @@ resource "aws_spot_instance_request" "rabbitmq" {
     Name = "rabbitmq-${var.ENV}"
   }
 }
+resource "aws_route53_record" "rabbitmq" {
+  zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
+  name    = "rabbitmq-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_NAME}"
+  type    = "A"
+  ttl     = "300"
+  records = [aws_spot_instance_request.rabbitmq.private_ip]
+}
 
 resource "null_resource" "app-deploy" {
   provisioner "remote-exec" {
@@ -160,10 +167,3 @@ resource "null_resource" "app-deploy" {
   }
 }
 
-resource "aws_route53_record" "rabbitmq" {
-  zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
-  name    = "rabbitmq-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_NAME}"
-  type    = "A"
-  ttl     = "300"
-  records = [aws_spot_instance_request.rabbitmq.private_ip]
-}

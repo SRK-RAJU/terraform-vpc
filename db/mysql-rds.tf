@@ -143,6 +143,22 @@
 # devops batch 63 code
 
 
+resource "aws_db_instance" "mysql" {
+
+  identifier             = "roboshop-mysql-${var.ENV}"
+  allocated_storage      = var.RDS_MYSQL_STORAGE
+  engine                 = "mysql"
+  engine_version         = var.RDS_ENGINE_VERSION
+  instance_class         = var.RDS_INSTANCE_TYPE
+  db_name                 = "SRKRDS"
+  username               = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_USER"]
+  password               = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_PASS"]
+  parameter_group_name   = aws_db_parameter_group.mysql.name
+  skip_final_snapshot    = true
+  db_subnet_group_name   = aws_db_subnet_group.mysql.name
+  vpc_security_group_ids = [aws_security_group.allow_mysql.id]
+}
+
 resource "aws_security_group" "allow_mysql" {
   name        = "roboshop-mysql-${var.ENV}"
   description = "roboshop-mysql-${var.ENV}"
@@ -169,19 +185,7 @@ resource "aws_security_group" "allow_mysql" {
   }
 }
 
-resource "aws_db_instance" "mysql" {
-  identifier             = "roboshop-mysql-${var.ENV}"
-  allocated_storage      = var.RDS_MYSQL_STORAGE
-  engine                 = "mysql"
-  engine_version         = var.RDS_ENGINE_VERSION
-  instance_class         = var.RDS_INSTANCE_TYPE
-  username               = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_USER"]
-  password               = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_PASS"]
-  parameter_group_name   = aws_db_parameter_group.mysql.name
-  skip_final_snapshot    = true
-  db_subnet_group_name   = aws_db_subnet_group.mysql.name
-  vpc_security_group_ids = [aws_security_group.allow_mysql.id]
-}
+
 
 
 resource "aws_db_parameter_group" "mysql" {
