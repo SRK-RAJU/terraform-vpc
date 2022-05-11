@@ -198,7 +198,7 @@ resource "aws_docdb_cluster" "docdb" {
 
 resource "aws_docdb_subnet_group" "docdb" {
   name       = "roboshop-${var.ENV}"
-  subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_IDS
+  subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS
 
   tags = {
     Name = "roboshop-${var.ENV}"
@@ -238,8 +238,8 @@ resource "aws_security_group" "allow_mongodb" {
   }
 }
 resource "aws_route53_record" "record" {
-  zone_id = data.terraform_remote_state.vpc.outputs.HOSTEDZONE_PRIVATE_ID
-  name    = "mongodb-${var.ENV}.${data.terraform_remote_state.vpc.outputs.HOSTEDZONE_PRIVATE_ZONE}"
+  zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
+  name    = "mongodb-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_NAME}"
   type    = "CNAME"
   ttl     = "300"
   records = [aws_docdb_cluster.docdb.endpoint]
@@ -252,8 +252,13 @@ cd /tmp
 curl -s -L -o /tmp/mongodb.zip "https://github.com/roboshop-devops-project/mongodb/archive/main.zip"
 unzip -o mongodb.zip
 cd mongodb-main
-mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${local.DNS_NAME} --username ${local.USERNAME} --password ${local.PASSWORD} < catalogue.js
-mongo --ssl --sslCAFile /home/centos/rds-combined-ca-bundle.pem --host ${local.DNS_NAME} --username ${local.USERNAME} --password ${local.PASSWORD}  < users.js
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+#mongo --ssl --host roboshop-dev.ctfkbpezmfa1.us-east-1.docdb.amazonaws.com:27017 --sslCAFile rds-combined-ca-bundle.pem --username admin1 --password roboshop1
+#mongo --ssl --sslCAFile rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < catalogue.js
+#mongo --ssl --sslCAFile rds-combined-ca-bundle.pem --host ${aws_docdb_cluster.docdb.endpoint} --username admin1 --password roboshop1 < users.js
+mongo --ssl --sslCAFile rds-combined-ca-bundle.pem --host ${local.DNS_NAME} --username ${local.USERNAME} --password ${local.PASSWORD} < catalogue.js
+mongo --ssl --sslCAFile rds-combined-ca-bundle.pem --host ${local.DNS_NAME} --username ${local.USERNAME} --password ${local.PASSWORD}  < users.js
 EOF
   }
 }
