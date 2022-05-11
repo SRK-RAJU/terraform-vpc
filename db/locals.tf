@@ -12,6 +12,6 @@ locals {
   ALL_CIDR         = concat(data.terraform_remote_state.vpc.outputs.ALL_VPC_CIDR, local.D_VPC_CIDR)
 
   DNS_NAME = aws_docdb_cluster.docdb.endpoint
-  USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["DOCUMENTDB_MASTER_USERNAME"]
-  PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["DOCUMENTDB_MASTER_PASSWORD"]
+  USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_USER"]
+  PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["SSH_PASS"]
 }

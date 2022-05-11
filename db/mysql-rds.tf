@@ -175,8 +175,8 @@ resource "aws_db_instance" "mysql" {
   engine                 = "mysql"
   engine_version         = var.RDS_ENGINE_VERSION
   instance_class         = var.RDS_INSTANCE_TYPE
-  username               = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string)["RDS_MYSQL_USERNAME"]
-  password               = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string)["RDS_MYSQL_PASSWORD"]
+  username               = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_USER"]
+  password               = jsondecode(data.aws_secretsmanager_secret_version.secrets-version.secret_string)["RDS_PASS"]
   parameter_group_name   = aws_db_parameter_group.mysql.name
   skip_final_snapshot    = true
   db_subnet_group_name   = aws_db_subnet_group.mysql.name
@@ -191,15 +191,15 @@ resource "aws_db_parameter_group" "mysql" {
 
 resource "aws_db_subnet_group" "mysql" {
   name       = "roboshop-mysql-${var.ENV}"
-  subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_IDS
+  subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNETS
 
   tags = {
     Name = "roboshop-${var.ENV}"
   }
 }
 resource "aws_route53_record" "record" {
-  zone_id = data.terraform_remote_state.vpc.outputs.HOSTEDZONE_PRIVATE_ID
-  name    = "mysql-${var.ENV}.${data.terraform_remote_state.vpc.outputs.HOSTEDZONE_PRIVATE_ZONE}"
+  zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
+  name    = "mysql-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_NAME}"
   type    = "CNAME"
   ttl     = "300"
   records = [aws_db_instance.mysql.address]
@@ -211,7 +211,7 @@ cd /tmp
 curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip"
 unzip -o mysql.zip
 cd mysql-main
-mysql -h ${aws_db_instance.mysql.address} -u admin1 -pRoboShop1 <shipping.sql
+mysql -h ${aws_db_instance.mysql.address} -u admin -padmin123 <shipping.sql
 EOF
   }
 }
