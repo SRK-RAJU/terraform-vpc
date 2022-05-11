@@ -204,7 +204,7 @@ resource "aws_route53_record" "mysql" {
   ttl     = "300"
   records = [aws_db_instance.mysql.address]
 }
-resource "null_resource" "schema" {
+resource "null_resource" "mysql-schema-apply" {
   provisioner "local-exec" {
     command = <<EOF
 cd /tmp

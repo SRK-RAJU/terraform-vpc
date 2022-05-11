@@ -245,7 +245,7 @@ resource "aws_route53_record" "mongodb" {
   records = [aws_docdb_cluster.docdb.endpoint]
 }
 resource "null_resource" "schema" {
-  depends_on = [aws_route53_record.record]
+  depends_on = [aws_route53_record.mongodb]
   provisioner "local-exec" {
     command = <<EOF
 cd /tmp
