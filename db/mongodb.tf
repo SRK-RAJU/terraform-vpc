@@ -237,7 +237,7 @@ resource "aws_security_group" "allow_mongodb" {
     Name = "roboshop-mongodb-${var.ENV}"
   }
 }
-resource "aws_route53_record" "record" {
+resource "aws_route53_record" "mongodb" {
   zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
   name    = "mongodb-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_NAME}"
   type    = "CNAME"

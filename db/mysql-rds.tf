@@ -197,7 +197,7 @@ resource "aws_db_subnet_group" "mysql" {
     Name = "roboshop-${var.ENV}"
   }
 }
-resource "aws_route53_record" "record" {
+resource "aws_route53_record" "mysql" {
   zone_id = data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_ID
   name    = "mysql-${var.ENV}.${data.terraform_remote_state.vpc.outputs.PRIVATE_HOSTED_ZONE_NAME}"
   type    = "CNAME"
