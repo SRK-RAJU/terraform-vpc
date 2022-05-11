@@ -215,7 +215,7 @@ cd /tmp
 curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip"
 unzip -o mysql.zip
 cd mysql-main
-mysql -h${aws_db_instance.mysql.address} -u${local.rds_user} -p${local.rds_pass} <shipping.sql
+mysql -h ${aws_db_instance.mysql.address} -u${local.rds_user} -p${local.rds_pass} <shipping.sql
 #mysql -h ${aws_db_instance.mysql.address} -u admin -padmin123 <shipping.sql
 EOF
   }
